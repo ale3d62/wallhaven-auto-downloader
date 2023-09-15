@@ -27,12 +27,12 @@ for wall in collectionWalls:
     
     #Obtain the wall name and extension
     wallId = wall["id"]
+    wallUrl = wall["path"]
     wallFileExtension = wallUrl.split('.')[-1]
     
     #Check if wall is already downloaded
     if(not path.isfile(outDir + "\\wallhaven-" + wallId + "." + wallFileExtension)):
         #Download the wall
-        wallUrl = wall["path"]
         wallContent = get(wallUrl).content
         with open(outDir + "\\wallhaven-" + wallId + "." + wallFileExtension, 'wb') as f:
             f.write(wallContent)
