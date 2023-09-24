@@ -1,16 +1,41 @@
-import collections
 from requests import get
-from os import path
+from os import path, mkdir
 from math import ceil
+from PIL import Image
+import PIL
+
+#PAREMETERS
+#------------------------------------------------------------
 
 username = "ale3d62"
-collectionId = "1591884"
+collections = [
+    {
+        "collectionId": "1591884",
+        "collectionName": "Default"
+    },
+    {
+        "collectionId": "1610358",
+        "collectionName": "browser"
+    }
+]
+
 outDir = "G:\Mi unidad\Mis Archivos\Personal\Wallpapers"
+
+thumbWidth = 180
+
+#------------------------------------------------------------
+
+
 
 #Downloads the wallpapers from the selected wallhaven collection
 #**The collection has to be public for the script to work**
 
-def downloadWallpapers():
+def downloadWallpapers(collection):
+
+    collectionId = collection['collectionId']
+    collectionName = collection['collectionName']
+
+
     #get collection size
     apiResponse = get("https://wallhaven.cc/api/v1/collections/" + username)
     if("error" in apiResponse.json()):
@@ -50,19 +75,42 @@ def downloadWallpapers():
             wallId = wall["id"]
             wallUrl = wall["path"]
             wallFileExtension = wallUrl.split('.')[-1]
+
+            wallFullPath = outDir + "\\" + collectionName + "\\wallhaven-" + wallId + "." + wallFileExtension
+
+            #If collection directory doesnt exists, create it
+            collectionPath = outDir + "\\" + collectionName
+            if(not path.isdir(collectionPath)):
+                mkdir(collectionPath)
+
             
             #Check if wall is already downloaded
-            if(not path.isfile(outDir + "\\wallhaven-" + wallId + "." + wallFileExtension)):
+            if(not path.isfile(wallFullPath)):
                 #Download the wall
                 wallContent = get(wallUrl).content
-                with open(outDir + "\\wallhaven-" + wallId + "." + wallFileExtension, 'wb') as f:
+                with open(wallFullPath, 'wb') as f:
                     f.write(wallContent)
                     f.close()
+                
+            #If the wall is for the browser, make a thumb
+            if(collectionName == "browser"):
+
+                wallThumbPath = outDir + "\\" + collectionName + "\\thumbs\\wallhaven-" + wallId + "." + wallFileExtension
+
+                if(not path.isfile(wallThumbPath)):
+                    image = PIL.Image.open(wallFullPath)
+                    widthPercent = (thumbWidth / float(image.size[0]))
+                    thumbHeight = int((float(image.size[1]) * float(widthPercent)))
+                    image = image.resize((thumbWidth, thumbHeight), PIL.Image.LANCZOS)
+                    image.save(wallThumbPath)
+
 
     print("\033[FWallpapers successfully downloaded!")
 
 
 
 
-
-downloadWallpapers()
+for collection in collections:
+    print("--"+collection['collectionName']+"--")
+    downloadWallpapers(collection)
+    print("")
