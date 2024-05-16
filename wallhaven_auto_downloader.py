@@ -37,8 +37,12 @@ def downloadWallpapers(collection):
 
 
     #get collection size
-    apiResponse = get("https://wallhaven.cc/api/v1/collections/" + username)
-    if("error" in apiResponse.json()):
+    try:
+        apiResponse = get("https://wallhaven.cc/api/v1/collections/" + username)
+        if("error" in apiResponse.json()):
+            print("Error during the api request, check the username and the collection Id")
+            return
+    except:
         print("Error during the api request, check the username and the collection Id")
         return
 
@@ -67,8 +71,8 @@ def downloadWallpapers(collection):
         
 
         for wall in collectionWalls:
-            
-            print("\033[FDownloading " + str(currentWallIndex + currentPage*24) + "/" + str(collectionSize))
+            realWallIndex = currentWallIndex + currentPage*24
+            print("\033[FDownloading " + str(realWallIndex) + "/" + str(collectionSize) + "[" + str(int(realWallIndex/collectionSize*100)) + "%]")
             currentWallIndex += 1
             
             #Obtain the wall name and extension
