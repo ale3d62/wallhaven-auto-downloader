@@ -3,6 +3,18 @@ from os import path, mkdir
 from math import ceil
 from PIL import Image
 import PIL
+import platform
+
+
+#Detect if running on windows or linux
+runningOs = platform.system()
+
+#Set path separator
+if(runningOs == "Windows"):
+	pSlash = "\\"
+else:
+	pSlash = "/"
+
 
 #PAREMETERS
 #------------------------------------------------------------
@@ -19,7 +31,10 @@ collections = [
     }
 ]
 
-outDir = "G:\Mi unidad\Mis Archivos\Personal\Wallpapers"
+if(runningOs == "Linux"):
+	outDir = "/home/ale/Wallpapers"
+else:
+	outDir = "G:\Mi unidad\Mis Archivos\Personal\Wallpapers"
 
 thumbWidth = 180
 
@@ -80,10 +95,11 @@ def downloadWallpapers(collection):
             wallUrl = wall["path"]
             wallFileExtension = wallUrl.split('.')[-1]
 
-            wallFullPath = outDir + "\\" + collectionName + "\\wallhaven-" + wallId + "." + wallFileExtension
+            wallFullPath = outDir + pSlash + collectionName + pSlash + "wallhaven-" + wallId + "." + wallFileExtension
 
             #If collection directory doesnt exists, create it
-            collectionPath = outDir + "\\" + collectionName
+            collectionPath = outDir + pSlash + collectionName
+
             if(not path.isdir(collectionPath)):
                 mkdir(collectionPath)
 
@@ -99,7 +115,10 @@ def downloadWallpapers(collection):
             #If the wall is for the browser, make a thumb
             if(collectionName == "browser"):
 
-                wallThumbPath = outDir + "\\" + collectionName + "\\thumbs\\wallhaven-" + wallId + "." + wallFileExtension
+                if(not path.isdir(outDir + pSlash + "browser" + pSlash + "thumbs")):
+                    mkdir(outDir + pSlash + "browser" + pSlash + "thumbs")
+
+                wallThumbPath = outDir + pSlash + collectionName + pSlash + "thumbs" + pSlash + "wallhaven-" + wallId + "." + wallFileExtension
 
                 if(not path.isfile(wallThumbPath)):
                     image = PIL.Image.open(wallFullPath)
