@@ -1,5 +1,5 @@
 from requests import get
-from os import path, mkdir
+from os import path, makedirs
 from math import ceil
 from PIL import Image
 import PIL
@@ -101,7 +101,7 @@ def downloadWallpapers(collection):
             collectionPath = outDir + pSlash + collectionName
 
             if(not path.isdir(collectionPath)):
-                mkdir(collectionPath)
+                makedirs(collectionPath)
 
             
             #Check if wall is already downloaded
@@ -116,7 +116,7 @@ def downloadWallpapers(collection):
             if(collectionName == "browser"):
 
                 if(not path.isdir(outDir + pSlash + "browser" + pSlash + "thumbs")):
-                    mkdir(outDir + pSlash + "browser" + pSlash + "thumbs")
+                    makedirs(outDir + pSlash + "browser" + pSlash + "thumbs")
 
                 wallThumbPath = outDir + pSlash + collectionName + pSlash + "thumbs" + pSlash + "wallhaven-" + wallId + "." + wallFileExtension
 
